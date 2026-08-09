@@ -1,23 +1,55 @@
-# Python
+# ── Python ────────────────────────────────────────────────────────────────────
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
-.Python
-env/
+*.pyd
+
+# ── Virtual Environments ──────────────────────────────────────────────────────
+.venv/
 venv/
+env/
 ENV/
 env.bak/
 venv.bak/
 
-# Flask & SQLite
+# ── Flask / SQLite (local development only) ───────────────────────────────────
 instance/
 *.db
+*.sqlite
 *.sqlite3
-.env
 
-# IDE & OS
+# ── Environment & Secrets (NEVER commit these) ────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── Flask-Migrate / Alembic generated files ──────────────────────────────────
+# (keep migrations/versions/*.py — they should be committed)
+
+# ── Build & Distribution ──────────────────────────────────────────────────────
+dist/
+build/
+*.egg-info/
+*.egg
+.eggs/
+pip-wheel-metadata/
+
+# ── Testing ───────────────────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+nosetests.xml
+coverage.xml
+
+# ── IDE & Editor ──────────────────────────────────────────────────────────────
 .vscode/
 .idea/
+*.sublime-project
+*.sublime-workspace
+
+# ── Operating System ──────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
+Desktop.ini

@@ -1,27 +1,45 @@
 import os
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
+# Load environment variables from .env for local development
 basedir = os.path.abspath(os.path.dirname(__file__))
 load_dotenv(os.path.join(basedir, '.env'))
 
 
 class Config:
-    """Base application configuration class."""
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'default-fallback-secret-key-2026'
+    """Application configuration — reads from environment variables.
 
-    # Handle database URL configuration
-    db_url = os.environ.get('DATABASE_URL')
+    Local development: set DATABASE_URL in .env to sqlite:///... (or leave
+    unset to fall back to the local SQLite file automatically).
 
-    # Normalize SQLite paths to use absolute instance/inventory.db
-    if not db_url or db_url in ('sqlite:///inventory.db', 'sqlite:///instance/inventory.db'):
-        db_path = os.path.join(basedir, 'instance', 'inventory.db').replace('\\', '/')
-        db_url = f'sqlite:///{db_path}'
-    elif db_url.startswith('postgres://'):
-        db_url = db_url.replace('postgres://', 'postgresql://', 1)
+    Production (Render): set DATABASE_URL to the PostgreSQL connection string
+    provided by Render. The postgres:// → postgresql:// rewrite is applied
+    automatically because SQLAlchemy 1.4+ dropped the old dialect alias.
+    """
 
-    SQLALCHEMY_DATABASE_URI = db_url
+    # ── Security ──────────────────────────────────────────────────────────────
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'change-me-in-production-env'
+
+    # ── Database ──────────────────────────────────────────────────────────────
+    _db_url = os.environ.get('DATABASE_URL')
+
+    if not _db_url:
+        # No DATABASE_URL set → fall back to local SQLite for development
+        _sqlite_path = os.path.join(basedir, 'instance', 'inventory.db').replace('\\', '/')
+        _db_url = f'sqlite:///{_sqlite_path}'
+    elif _db_url.startswith('postgres://'):
+        # Render (and Heroku) still issue the old postgres:// scheme;
+        # SQLAlchemy 1.4+ requires postgresql://
+        _db_url = _db_url.replace('postgres://', 'postgresql://', 1)
+
+    SQLALCHEMY_DATABASE_URI = _db_url
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    # Flask-WTF CSRF Protection
+    # PostgreSQL connection pool tuning (ignored by SQLite, safe to leave on)
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_pre_ping': True,   # reconnect automatically if connection drops
+        'pool_recycle': 300,     # recycle connections every 5 min (Render idle timeout)
+    }
+
+    # ── Flask-WTF CSRF Protection ─────────────────────────────────────────────
     WTF_CSRF_ENABLED = True

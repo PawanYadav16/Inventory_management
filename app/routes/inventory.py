@@ -48,8 +48,10 @@ def add_item():
 @login_required
 def item_detail(item_id):
     """View details of a specific inventory item."""
-    item = Item.query.get_or_404(item_id)
-    
+    item = db.session.get(Item, item_id)
+    if item is None:
+        abort(404)
+
     # Enforce strict user data ownership
     if item.user_id != current_user.id:
         abort(403)
@@ -61,8 +63,10 @@ def item_detail(item_id):
 @login_required
 def edit_item(item_id):
     """Edit an existing inventory item."""
-    item = Item.query.get_or_404(item_id)
-    
+    item = db.session.get(Item, item_id)
+    if item is None:
+        abort(404)
+
     # Enforce strict user data ownership
     if item.user_id != current_user.id:
         abort(403)
@@ -108,22 +112,15 @@ def edit_item(item_id):
 @login_required
 def delete_item(item_id):
     """Delete an inventory item securely scoped to the current user."""
-    print(f"[DEBUG_DELETE] Received POST request to delete item_id={item_id} for user_id={current_user.id}")
     item = Item.query.filter_by(id=item_id, user_id=current_user.id).first_or_404()
     item_name = item.name
-    print(f"[DEBUG_DELETE] Found item name='{item_name}', id={item.id}. Deleting transactions & item...")
 
-    # Explicitly delete related stock transaction audit records to prevent orphaned rows
-    deleted_tx_count = StockTransaction.query.filter_by(item_id=item.id, user_id=current_user.id).delete(synchronize_session=False)
-    print(f"[DEBUG_DELETE] Deleted {deleted_tx_count} StockTransaction records.")
+    # Explicitly delete related stock transaction audit records first
+    StockTransaction.query.filter_by(item_id=item.id, user_id=current_user.id).delete(synchronize_session=False)
 
     # Perform full database record deletion
     db.session.delete(item)
     db.session.commit()
-
-    # Explicit post-commit assertion to verify SQLite record removal
-    deleted_check = Item.query.get(item_id)
-    print(f"[DEBUG_DELETE] Committed deletion of item_id={item_id} to database. Item.query.get({item_id}) returns: {deleted_check}")
 
     flash(f'Product "{item_name}" has been deleted from your inventory.', 'success')
     return redirect(url_for('dashboard.index'))
@@ -133,8 +130,10 @@ def delete_item(item_id):
 @login_required
 def adjust_quantity(item_id):
     """Increase (+1) or decrease (-1) product quantity via standard POST request."""
-    item = Item.query.get_or_404(item_id)
-    
+    item = db.session.get(Item, item_id)
+    if item is None:
+        abort(404)
+
     # Enforce strict user data ownership
     if item.user_id != current_user.id:
         abort(403)
@@ -178,8 +177,10 @@ def adjust_quantity(item_id):
 @login_required
 def stock_history(item_id):
     """View stock change audit history for a specific item."""
-    item = Item.query.get_or_404(item_id)
-    
+    item = db.session.get(Item, item_id)
+    if item is None:
+        abort(404)
+
     # Enforce strict user data ownership
     if item.user_id != current_user.id:
         abort(403)

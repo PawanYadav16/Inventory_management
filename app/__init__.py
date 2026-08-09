@@ -33,26 +33,6 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     csrf.init_app(app)
 
-    # Ensure SQLite database schema contains currency column if database file exists
-    db_uri = app.config.get('SQLALCHEMY_DATABASE_URI', '')
-    if db_uri.startswith('sqlite:///'):
-        db_path = db_uri.replace('sqlite:///', '')
-        if os.path.exists(db_path):
-            try:
-                import sqlite3
-                conn = sqlite3.connect(db_path)
-                cursor = conn.cursor()
-                cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='users'")
-                if cursor.fetchone():
-                    cursor.execute("PRAGMA table_info(users)")
-                    columns = [row[1] for row in cursor.fetchall()]
-                    if 'currency' not in columns:
-                        cursor.execute("ALTER TABLE users ADD COLUMN currency VARCHAR(10) NOT NULL DEFAULT 'INR'")
-                        conn.commit()
-                conn.close()
-            except Exception:
-                pass
-
     # Register Blueprints
     from app.routes.auth import auth_bp
     from app.routes.dashboard import dashboard_bp
