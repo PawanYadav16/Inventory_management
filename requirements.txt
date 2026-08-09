@@ -10,4 +10,4 @@ Werkzeug==3.0.3
 # Production WSGI server (required for Render)
 gunicorn==21.2.0
 # PostgreSQL driver (binary wheel — no compilation needed on Render)
-psycopg2-binary==2.9.9
+psycopg2-binary==2.9.12
