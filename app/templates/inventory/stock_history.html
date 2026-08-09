@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Stock History - {{ item.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('dashboard.index') }}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('inventory.item_detail', item_id=item.id) }}">{{ item.name }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Stock History</li>
+        </ol>
+    </nav>
+
+    <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="card-header bg-dark text-white p-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div class="d-flex align-items-center gap-3">
+                <div class="bg-info p-3 rounded-3 text-dark">
+                    <i class="bi bi-clock-history fs-3"></i>
+                </div>
+                <div>
+                    <h3 class="fw-bold mb-0">Stock Transaction History</h3>
+                    <p class="small text-white-50 mb-0">Audit trail for product: <strong>{{ item.name }}</strong> (SKU: <code>{{ item.sku }}</code>)</p>
+                </div>
+            </div>
+            <a href="{{ url_for('inventory.item_detail', item_id=item.id) }}" class="btn btn-outline-light btn-sm">
+                <i class="bi bi-arrow-left me-1"></i> Back to Product
+            </a>
+        </div>
+
+        <div class="card-body p-0">
+            {% if transactions %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light text-uppercase small">
+                            <tr>
+                                <th class="ps-4">Date & Time</th>
+                                <th>Quantity Change</th>
+                                <th>Transaction Type / Reason</th>
+                                <th class="pe-4">Audit Record ID</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for t in transactions %}
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-semibold text-dark">{{ t.created_at.strftime('%d %b %Y') }}</div>
+                                        <div class="small text-muted">{{ t.created_at.strftime('%H:%M:%S UTC') }}</div>
+                                    </td>
+                                    <td>
+                                        {% if t.change > 0 %}
+                                            <span class="badge bg-success-subtle text-success fs-6 border border-success px-3 py-2">
+                                                <i class="bi bi-arrow-up-right me-1"></i> +{{ t.change }}
+                                            </span>
+                                        {% elif t.change < 0 %}
+                                            <span class="badge bg-danger-subtle text-danger fs-6 border border-danger px-3 py-2">
+                                                <i class="bi bi-arrow-down-right me-1"></i> {{ t.change }}
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-secondary-subtle text-dark fs-6 border px-3 py-2">
+                                                0
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="fw-semibold">{{ t.transaction_type }}</span>
+                                    </td>
+                                    <td class="pe-4 text-muted small">
+                                        <code>#TX-{{ "%05d"|format(t.id) }}</code>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-journal-x fs-1 text-muted d-block mb-3"></i>
+                    <h5 class="fw-bold">No stock transactions logged yet</h5>
+                    <p class="text-muted small">Transaction records are automatically created whenever product quantity is modified.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

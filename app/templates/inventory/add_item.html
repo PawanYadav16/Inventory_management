@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}Add New Product - Inventory Management System{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <!-- Breadcrumb Navigation -->
+            <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('dashboard.index') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Add New Product</li>
+                </ol>
+            </nav>
+
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="card-header bg-dark text-white p-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-primary p-3 rounded-3 text-white">
+                            <i class="bi bi-box-seam-fill fs-3"></i>
+                        </div>
+                        <div>
+                            <h3 class="fw-bold mb-0">Add New Inventory Product</h3>
+                            <p class="small text-white-50 mb-0">Fill in the product specification and initial stock levels.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    <form method="POST" action="{{ url_for('inventory.add_item') }}" novalidate>
+                        {{ form.hidden_tag() }}
+
+                        <div class="row g-3">
+                            <!-- Product Name -->
+                            <div class="col-md-8">
+                                {{ form.name.label(class="form-label fw-semibold") }}
+                                {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else ""), placeholder="e.g., Wireless Mechanical Keyboard") }}
+                                {% for error in form.name.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <!-- Category -->
+                            <div class="col-md-4">
+                                {{ form.category.label(class="form-label fw-semibold") }}
+                                {{ form.category(class="form-select" + (" is-invalid" if form.category.errors else "")) }}
+                                {% for error in form.category.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <!-- Description -->
+                            <div class="col-12">
+                                {{ form.description.label(class="form-label fw-semibold") }}
+                                {{ form.description(class="form-control" + (" is-invalid" if form.description.errors else ""), rows=3, placeholder="Optional product description, specs, or notes...") }}
+                                {% for error in form.description.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <!-- SKU -->
+                            <div class="col-md-6">
+                                {{ form.sku.label(class="form-label fw-semibold") }}
+                                {{ form.sku(class="form-control" + (" is-invalid" if form.sku.errors else ""), placeholder="e.g., KBD-9002") }}
+                                {% for error in form.sku.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                                <div class="form-text small text-muted">SKU must be unique across your inventory.</div>
+                            </div>
+
+                            <!-- Price -->
+                            <div class="col-md-6">
+                                {{ form.price.label(class="form-label fw-semibold") }}
+                                <div class="input-group">
+                                    <span class="input-group-text">{{ current_user.currency_symbol }}</span>
+                                    {{ form.price(class="form-control" + (" is-invalid" if form.price.errors else ""), placeholder="0.00", step="0.01") }}
+                                </div>
+                                {% for error in form.price.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <!-- Initial Quantity -->
+                            <div class="col-md-6">
+                                {{ form.quantity.label(class="form-label fw-semibold") }}
+                                {{ form.quantity(class="form-control" + (" is-invalid" if form.quantity.errors else ""), type="number", min="0") }}
+                                {% for error in form.quantity.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                                <div class="form-text small text-muted">Enter initial count. <code>0</code> is allowed for out-of-stock items.</div>
+                            </div>
+
+                            <!-- Minimum Safety Quantity -->
+                            <div class="col-md-6">
+                                {{ form.minimum_quantity.label(class="form-label fw-semibold") }}
+                                {{ form.minimum_quantity(class="form-control" + (" is-invalid" if form.minimum_quantity.errors else ""), type="number", min="0") }}
+                                {% for error in form.minimum_quantity.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                                <div class="form-text small text-muted">Threshold that triggers the Low Stock alert badge.</div>
+                            </div>
+
+                            <!-- Supplier -->
+                            <div class="col-md-6">
+                                {{ form.supplier.label(class="form-label fw-semibold") }}
+                                {{ form.supplier(class="form-control" + (" is-invalid" if form.supplier.errors else ""), placeholder="e.g., TechLogistics Ltd.") }}
+                                {% for error in form.supplier.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <!-- Storage Location -->
+                            <div class="col-md-6">
+                                {{ form.location.label(class="form-label fw-semibold") }}
+                                {{ form.location(class="form-control" + (" is-invalid" if form.location.errors else ""), placeholder="e.g., Warehouse A, Shelf 4B") }}
+                                {% for error in form.location.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="{{ url_for('dashboard.index') }}" class="btn btn-outline-secondary px-4">Cancel</a>
+                            {{ form.submit(class="btn btn-primary px-4 fw-bold") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,78 @@
+/* Custom CSS - Inventory Management System */
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: #2b2d42;
+    background-color: #f8f9fa;
+}
+
+/* Custom 5-Column Grid Layout for Stat Cards */
+@media (min-width: 992px) {
+    .col-lg-2-4 {
+        flex: 0 0 auto;
+        width: 20%;
+    }
+}
+
+/* Gradient Hero Header */
+.bg-gradient-hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+}
+
+/* Custom Cards & Shadows */
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Custom Badges & Typography */
+.hover-white:hover {
+    color: #ffffff !important;
+}
+
+.hover-primary:hover {
+    color: #0d6efd !important;
+}
+
+.fw-extrabold {
+    font-weight: 800;
+}
+
+.tracking-wider {
+    letter-spacing: 0.05em;
+}
+
+/* Table Styling */
+.table th {
+    font-weight: 600;
+    letter-spacing: 0.03em;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(13, 110, 253, 0.03);
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+/* Code Blocks */
+code {
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    background-color: rgba(13, 110, 253, 0.08);
+    color: #0d6efd;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+    font-size: 0.875em;
+}

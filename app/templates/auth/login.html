@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In - Inventory Management System{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-5">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="card-header bg-dark text-white p-4 text-center">
+                    <i class="bi bi-box-seam-fill text-primary fs-1 mb-2 d-inline-block"></i>
+                    <h3 class="fw-bold mb-0">Welcome Back</h3>
+                    <p class="small text-white-50 mb-0">Sign in to access your inventory dashboard</p>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    <form method="POST" action="{{ url_for('auth.login', next=request.args.get('next')) }}" novalidate>
+                        {{ form.hidden_tag() }}
+
+                        <!-- Email Field -->
+                        <div class="mb-3">
+                            {{ form.email.label(class="form-label fw-semibold") }}
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-envelope text-muted"></i></span>
+                                {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else ""), placeholder="name@example.com") }}
+                            </div>
+                            {% for error in form.email.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="mb-3">
+                            {{ form.password.label(class="form-label fw-semibold") }}
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-lock text-muted"></i></span>
+                                {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else ""), placeholder="Enter your password") }}
+                            </div>
+                            {% for error in form.password.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid mb-3">
+                            {{ form.submit(class="btn btn-primary btn-lg fw-bold") }}
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer bg-light py-3 text-center border-0">
+                    <span class="text-muted small">Don't have an account? </span>
+                    <a href="{{ url_for('auth.register') }}" class="fw-bold text-primary text-decoration-none">Create your account</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
